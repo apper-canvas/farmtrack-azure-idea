@@ -1,22 +1,22 @@
-import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { format } from "date-fns";
+import { toast } from "react-toastify";
+import Chart from "react-apexcharts";
+import farmService from "@/services/api/farmService";
+import incomeService from "@/services/api/incomeService";
+import cropService from "@/services/api/cropService";
+import expenseService from "@/services/api/expenseService";
+import ApperIcon from "@/components/ApperIcon";
 import Button from "@/components/atoms/Button";
-import Input from "@/components/atoms/Input";
 import Select from "@/components/atoms/Select";
 import Card from "@/components/atoms/Card";
+import Input from "@/components/atoms/Input";
 import Modal from "@/components/molecules/Modal";
 import StatCard from "@/components/molecules/StatCard";
 import Loading from "@/components/ui/Loading";
 import Error from "@/components/ui/Error";
 import Empty from "@/components/ui/Empty";
-import ApperIcon from "@/components/ApperIcon";
-import expenseService from "@/services/api/expenseService";
-import incomeService from "@/services/api/incomeService";
-import farmService from "@/services/api/farmService";
-import cropService from "@/services/api/cropService";
-import { format } from "date-fns";
-import { toast } from "react-toastify";
-import Chart from "react-apexcharts";
 
 const Finances = () => {
   const [expenses, setExpenses] = useState([]);
@@ -31,20 +31,20 @@ const Finances = () => {
   const [editingExpense, setEditingExpense] = useState(null);
   const [editingIncome, setEditingIncome] = useState(null);
   
-  const [expenseForm, setExpenseForm] = useState({
-    date: format(new Date(), 'yyyy-MM-dd'),
-    category: "",
-    amount: "",
-    description: "",
-    farmId: ""
+const [expenseForm, setExpenseForm] = useState({
+    date_c: format(new Date(), 'yyyy-MM-dd'),
+    category_c: "",
+    amount_c: "",
+    description_c: "",
+    farm_id_c: ""
   });
   
   const [incomeForm, setIncomeForm] = useState({
-    date: format(new Date(), 'yyyy-MM-dd'),
-    cropId: "",
-    quantity: "",
-    pricePerUnit: "",
-    buyer: ""
+    date_c: format(new Date(), 'yyyy-MM-dd'),
+    crop_id_c: "",
+    quantity_c: "",
+    price_per_unit_c: "",
+    buyer_c: ""
   });
 
   const loadData = async () => {
@@ -73,14 +73,14 @@ const Finances = () => {
   }, []);
 
   const openExpenseModal = (expense = null) => {
-    if (expense) {
+if (expense) {
       setEditingExpense(expense);
       setExpenseForm({
-        date: expense.date,
-        category: expense.category,
-        amount: expense.amount.toString(),
-        description: expense.description,
-        farmId: expense.farmId || ""
+        date_c: expense.date_c,
+        category_c: expense.category_c,
+        amount_c: expense.amount_c.toString(),
+        description_c: expense.description_c,
+        farm_id_c: expense.farm_id_c?.Id ? expense.farm_id_c.Id.toString() : ""
       });
     } else {
       setEditingExpense(null);
@@ -96,14 +96,14 @@ const Finances = () => {
   };
 
   const openIncomeModal = (incomeItem = null) => {
-    if (incomeItem) {
+if (incomeItem) {
       setEditingIncome(incomeItem);
       setIncomeForm({
-        date: incomeItem.date,
-        cropId: incomeItem.cropId,
-        quantity: incomeItem.quantity.toString(),
-        pricePerUnit: incomeItem.pricePerUnit.toString(),
-        buyer: incomeItem.buyer
+        date_c: incomeItem.date_c,
+        crop_id_c: incomeItem.crop_id_c?.Id ? incomeItem.crop_id_c.Id.toString() : "",
+        quantity_c: incomeItem.quantity_c.toString(),
+        price_per_unit_c: incomeItem.price_per_unit_c.toString(),
+        buyer_c: incomeItem.buyer_c
       });
     } else {
       setEditingIncome(null);
@@ -214,24 +214,24 @@ const Finances = () => {
   const handleExportCSV = () => {
     try {
       // Combine expenses and income into unified dataset
-      const combinedData = [
+const combinedData = [
         ...expenses.map(expense => ({
           type: 'Expense',
-          date: format(new Date(expense.date), 'yyyy-MM-dd'),
-          category: expense.category,
-          description: expense.description,
-          amount: expense.amount,
-          farm: farms.find(f => f.Id === expense.farmId)?.name || '',
+          date: format(new Date(expense.date_c), 'yyyy-MM-dd'),
+          category: expense.category_c,
+          description: expense.description_c,
+          amount: expense.amount_c,
+          farm: farms.find(f => f.Id === expense.farm_id_c?.Id)?.name_c || '',
           crop: ''
         })),
         ...income.map(inc => ({
-type: 'Income',
-          date: format(new Date(inc.date), 'yyyy-MM-dd'),
+          type: 'Income',
+          date: format(new Date(inc.date_c), 'yyyy-MM-dd'),
           category: 'Harvest',
-          description: `${inc.quantity} units @ $${inc.pricePerUnit}/unit`,
-          amount: inc.quantity * inc.pricePerUnit,
-          farm: farms.find(f => f.Id === inc.farmId)?.name || '',
-          crop: crops.find(c => c.Id === inc.cropId)?.name || ''
+          description: `${inc.quantity_c} units @ $${inc.price_per_unit_c}/unit`,
+          amount: inc.total_amount_c,
+          farm: farms.find(f => f.Id === crops.find(c => c.Id === inc.crop_id_c?.Id)?.farm_id_c?.Id)?.name_c || '',
+          crop: crops.find(c => c.Id === inc.crop_id_c?.Id)?.crop_name_c || ''
         }))
       ];
 
@@ -264,18 +264,18 @@ type: 'Income',
       toast.error('Failed to export data');
     }
   };
-  const getFarmName = (farmId) => {
-    const farm = farms.find(f => f.Id.toString() === farmId);
-    return farm ? farm.name : "General";
+const getFarmName = (farmId) => {
+    const farm = farms.find(f => f.Id === farmId);
+    return farm ? farm.name_c : "General";
   };
 
-  const getCropName = (cropId) => {
-    const crop = crops.find(c => c.Id.toString() === cropId);
-    return crop ? `${crop.cropName} - ${crop.variety}` : "Unknown Crop";
+const getCropName = (cropId) => {
+    const crop = crops.find(c => c.Id === cropId);
+    return crop ? `${crop.crop_name_c} - ${crop.variety_c}` : "Unknown Crop";
   };
 
-  const totalExpenses = expenses.reduce((sum, expense) => sum + expense.amount, 0);
-  const totalIncome = income.reduce((sum, inc) => sum + inc.totalAmount, 0);
+const totalExpenses = expenses.reduce((sum, expense) => sum + expense.amount_c, 0);
+  const totalIncome = income.reduce((sum, inc) => sum + inc.total_amount_c, 0);
   const netProfit = totalIncome - totalExpenses;
 
   // Chart data
@@ -414,16 +414,16 @@ type: 'Income',
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">
                   Recent Expenses
                 </h3>
-                {expenses.slice(0, 5).map((expense) => (
+{expenses.slice(0, 5).map((expense) => (
                   <div key={expense.Id} className="flex justify-between items-center py-3 border-b border-gray-100 last:border-0">
                     <div>
-                      <p className="font-medium text-gray-900">{expense.description}</p>
+                      <p className="font-medium text-gray-900">{expense.description_c}</p>
                       <p className="text-sm text-gray-600">
-                        {expense.category} • {format(new Date(expense.date), 'MMM d, yyyy')}
+                        {expense.category_c} • {format(new Date(expense.date_c), 'MMM d, yyyy')}
                       </p>
                     </div>
                     <span className="font-semibold text-error">
-                      -${expense.amount.toLocaleString()}
+                      -${expense.amount_c.toLocaleString()}
                     </span>
                   </div>
                 ))}
@@ -434,15 +434,15 @@ type: 'Income',
                   Recent Income
                 </h3>
                 {income.slice(0, 5).map((incomeItem) => (
-                  <div key={incomeItem.Id} className="flex justify-between items-center py-3 border-b border-gray-100 last:border-0">
+<div key={incomeItem.Id} className="flex justify-between items-center py-3 border-b border-gray-100 last:border-0">
                     <div>
-                      <p className="font-medium text-gray-900">{getCropName(incomeItem.cropId)}</p>
+                      <p className="font-medium text-gray-900">{getCropName(incomeItem.crop_id_c?.Id)}</p>
                       <p className="text-sm text-gray-600">
-                        {incomeItem.quantity} units • {format(new Date(incomeItem.date), 'MMM d, yyyy')}
+                        {incomeItem.quantity_c} units • {format(new Date(incomeItem.date_c), 'MMM d, yyyy')}
                       </p>
                     </div>
                     <span className="font-semibold text-success">
-                      +${incomeItem.totalAmount.toLocaleString()}
+                      +${incomeItem.total_amount_c.toLocaleString()}
                     </span>
                   </div>
                 ))}
@@ -469,33 +469,33 @@ type: 'Income',
             ) : (
               <div className="space-y-4">
                 {expenses.map((expense) => (
-                  <Card key={expense.Id} className="p-6">
+<Card key={expense.Id} className="p-6">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center space-x-4 mb-2">
                           <h3 className="text-lg font-semibold text-gray-900">
-                            {expense.description}
+                            {expense.description_c}
                           </h3>
                           <span className="px-2 py-1 bg-red-100 text-red-800 text-xs rounded-full">
-                            {expense.category}
+                            {expense.category_c}
                           </span>
                         </div>
                         <div className="flex items-center space-x-4 text-sm text-gray-600">
                           <span className="flex items-center">
                             <ApperIcon name="Calendar" size={14} className="mr-1" />
-                            {format(new Date(expense.date), 'MMM d, yyyy')}
+                            {format(new Date(expense.date_c), 'MMM d, yyyy')}
                           </span>
-                          {expense.farmId && (
+                          {expense.farm_id_c && (
                             <span className="flex items-center">
                               <ApperIcon name="MapPin" size={14} className="mr-1" />
-                              {getFarmName(expense.farmId)}
+                              {getFarmName(expense.farm_id_c?.Id)}
                             </span>
                           )}
                         </div>
                       </div>
                       <div className="flex items-center space-x-4">
                         <span className="text-2xl font-bold text-error">
-                          ${expense.amount.toLocaleString()}
+                          ${expense.amount_c.toLocaleString()}
                         </span>
                         <div className="flex space-x-2">
                           <Button
@@ -542,33 +542,33 @@ type: 'Income',
             ) : (
               <div className="space-y-4">
                 {income.map((incomeItem) => (
-                  <Card key={incomeItem.Id} className="p-6">
+<Card key={incomeItem.Id} className="p-6">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                          {getCropName(incomeItem.cropId)}
+                          {getCropName(incomeItem.crop_id_c?.Id)}
                         </h3>
                         <div className="flex items-center space-x-4 text-sm text-gray-600 mb-2">
                           <span className="flex items-center">
                             <ApperIcon name="Calendar" size={14} className="mr-1" />
-                            {format(new Date(incomeItem.date), 'MMM d, yyyy')}
+                            {format(new Date(incomeItem.date_c), 'MMM d, yyyy')}
                           </span>
                           <span className="flex items-center">
                             <ApperIcon name="Package" size={14} className="mr-1" />
-                            {incomeItem.quantity} units
+                            {incomeItem.quantity_c} units
                           </span>
                           <span className="flex items-center">
                             <ApperIcon name="DollarSign" size={14} className="mr-1" />
-                            ${incomeItem.pricePerUnit}/unit
+                            ${incomeItem.price_per_unit_c}/unit
                           </span>
                         </div>
                         <p className="text-sm text-gray-600">
-                          Buyer: {incomeItem.buyer}
+                          Buyer: {incomeItem.buyer_c}
                         </p>
-                      </div>
+</div>
                       <div className="flex items-center space-x-4">
                         <span className="text-2xl font-bold text-success">
-                          ${incomeItem.totalAmount.toLocaleString()}
+                          +${incomeItem.total_amount_c.toLocaleString()}
                         </span>
                         <div className="flex space-x-2">
                           <Button
@@ -652,8 +652,8 @@ type: 'Income',
             onChange={(e) => setExpenseForm(prev => ({ ...prev, farmId: e.target.value }))}
           >
             <option value="">General expense</option>
-            {farms.map(farm => (
-              <option key={farm.Id} value={farm.Id.toString()}>{farm.name}</option>
+{farms.map(farm => (
+              <option key={farm.Id} value={farm.Id.toString()}>{farm.name_c}</option>
             ))}
           </Select>
 
@@ -705,9 +705,9 @@ type: 'Income',
             required
           >
             <option value="">Select crop</option>
-            {crops.map(crop => (
+{crops.map(crop => (
               <option key={crop.Id} value={crop.Id.toString()}>
-                {crop.cropName} - {crop.variety}
+                {crop.crop_name_c} - {crop.variety_c}
               </option>
             ))}
           </Select>

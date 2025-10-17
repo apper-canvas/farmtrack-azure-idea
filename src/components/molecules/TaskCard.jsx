@@ -15,10 +15,10 @@ const TaskCard = ({ task, onToggleComplete, onEdit, onDelete }) => {
     return variants[priority] || variants.low;
   };
 
-  const isOverdue = new Date(task.dueDate) < new Date() && !task.completed;
-  const isToday = format(new Date(task.dueDate), 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd');
+const isOverdue = new Date(task.due_date_c) < new Date() && !task.completed_c;
+  const isToday = format(new Date(task.due_date_c), 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd');
 
-  const priorityBadge = getPriorityBadge(task.priority);
+  const priorityBadge = getPriorityBadge(task.priority_c);
 
   return (
     <motion.div
@@ -35,17 +35,17 @@ const TaskCard = ({ task, onToggleComplete, onEdit, onDelete }) => {
         <div className="space-y-3">
           <div className="flex items-start justify-between">
             <div className="flex-1">
-              <h4 className={`font-medium ${task.completed ? 'line-through text-gray-500' : 'text-gray-900'}`}>
-                {task.title}
+<h4 className={`font-medium ${task.completed_c ? 'line-through text-gray-500' : 'text-gray-900'}`}>
+                {task.title_c}
               </h4>
-              {task.description && (
-                <p className="text-sm text-gray-600 mt-1">{task.description}</p>
+              {task.description_c && (
+                <p className="text-sm text-gray-600 mt-1">{task.description_c}</p>
               )}
             </div>
             <div className="flex items-center space-x-2 ml-4">
               <Badge variant={priorityBadge.variant}>
                 <ApperIcon name={priorityBadge.icon} size={12} className="mr-1" />
-                {task.priority}
+                {task.priority_c}
               </Badge>
             </div>
           </div>
@@ -53,8 +53,8 @@ const TaskCard = ({ task, onToggleComplete, onEdit, onDelete }) => {
           <div className="flex items-center justify-between text-sm">
             <div className="flex items-center text-gray-500">
               <ApperIcon name="Calendar" size={14} className="mr-1" />
-              <span className={isOverdue ? 'text-error font-medium' : isToday ? 'text-warning font-medium' : ''}>
-                {format(new Date(task.dueDate), 'MMM d, yyyy')}
+<span className={isOverdue ? 'text-error font-medium' : isToday ? 'text-warning font-medium' : ''}>
+                {format(new Date(task.due_date_c), 'MMM d, yyyy')}
               </span>
               {isOverdue && <span className="ml-1 text-error">(Overdue)</span>}
               {isToday && !isOverdue && <span className="ml-1 text-warning">(Today)</span>}
@@ -62,13 +62,13 @@ const TaskCard = ({ task, onToggleComplete, onEdit, onDelete }) => {
             
             <div className="flex items-center space-x-2">
               <button
-                onClick={() => onToggleComplete(task.Id)}
+onClick={() => onToggleComplete(task.Id)}
                 className="p-1 hover:bg-gray-100 rounded transition-colors"
               >
                 <ApperIcon 
-                  name={task.completed ? "CheckCircle2" : "Circle"} 
+                  name={task.completed_c ? "CheckCircle2" : "Circle"} 
                   size={16} 
-                  className={task.completed ? "text-success" : "text-gray-400"}
+                  className={task.completed_c ? "text-success" : "text-gray-400"}
                 />
               </button>
               <button

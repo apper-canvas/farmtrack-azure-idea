@@ -56,15 +56,15 @@ const Dashboard = () => {
     loadDashboardData();
   }, []);
 
-  const handleToggleTask = async (taskId) => {
+const handleToggleTask = async (taskId) => {
     try {
-      await taskService.toggleComplete(taskId);
-      setTasks(prev => prev.map(task => 
-        task.Id === taskId 
-          ? { ...task, completed: !task.completed, completedAt: !task.completed ? new Date().toISOString() : null }
-          : task
-      ));
-      toast.success("Task updated successfully");
+      const updatedTask = await taskService.toggleComplete(taskId);
+      if (updatedTask) {
+        setTasks(prev => prev.map(task => 
+          task.Id === taskId ? updatedTask : task
+        ));
+        toast.success("Task updated successfully");
+      }
     } catch (err) {
       toast.error("Failed to update task");
     }
@@ -73,23 +73,23 @@ const Dashboard = () => {
   if (loading) return <Loading />;
   if (error) return <Error message={error} onRetry={loadDashboardData} />;
 
-  const totalExpenses = expenses.reduce((sum, expense) => sum + expense.amount, 0);
-  const totalIncome = income.reduce((sum, inc) => sum + inc.totalAmount, 0);
+const totalExpenses = expenses.reduce((sum, expense) => sum + expense.amount_c, 0);
+  const totalIncome = income.reduce((sum, inc) => sum + inc.total_amount_c, 0);
   const netProfit = totalIncome - totalExpenses;
   
-  const todayTasks = tasks.filter(task => 
-    !task.completed && isToday(new Date(task.dueDate))
+const todayTasks = tasks.filter(task => 
+    !task.completed_c && isToday(new Date(task.due_date_c))
   );
   
   const overdueTasks = tasks.filter(task => 
-    !task.completed && isBefore(new Date(task.dueDate), new Date()) && !isToday(new Date(task.dueDate))
+    !task.completed_c && isBefore(new Date(task.due_date_c), new Date()) && !isToday(new Date(task.due_date_c))
   );
   
   const upcomingTasks = tasks.filter(task => 
-    !task.completed && !isToday(new Date(task.dueDate)) && !isBefore(new Date(task.dueDate), new Date())
+    !task.completed_c && !isToday(new Date(task.due_date_c)) && !isBefore(new Date(task.due_date_c), new Date())
   ).slice(0, 3);
 
-  const activeCrops = crops.filter(crop => crop.status === 'growing' || crop.status === 'flowering');
+const activeCrops = crops.filter(crop => crop.status_c === 'growing' || crop.status_c === 'flowering');
 
   return (
     <div className="space-y-8">
@@ -200,21 +200,21 @@ const Dashboard = () => {
             </div>
           ) : (
             <div className="space-y-3">
-              {upcomingTasks.map(task => (
+{upcomingTasks.map(task => (
                 <div key={task.Id} className="flex items-center justify-between p-3 bg-gray-50 rounded-button">
                   <div className="flex-1">
-                    <p className="font-medium text-gray-900">{task.title}</p>
+<p className="font-medium text-gray-900">{task.title_c}</p>
                     <p className="text-sm text-gray-600">
-                      Due: {format(new Date(task.dueDate), 'MMM d, yyyy')}
+                      Due: {format(new Date(task.due_date_c), 'MMM d, yyyy')}
                     </p>
                   </div>
                   <div className="text-right">
                     <span className={`text-xs px-2 py-1 rounded-full ${
-                      task.priority === 'high' ? 'bg-red-100 text-red-800' :
-                      task.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
+                      task.priority_c === 'high' ? 'bg-red-100 text-red-800' :
+                      task.priority_c === 'medium' ? 'bg-yellow-100 text-yellow-800' :
                       'bg-blue-100 text-blue-800'
                     }`}>
-                      {task.priority}
+                      {task.priority_c}
                     </span>
                   </div>
                 </div>

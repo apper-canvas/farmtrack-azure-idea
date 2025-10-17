@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useAuth } from "@/layouts/Root";
 import ApperIcon from "@/components/ApperIcon";
-import { cn } from "@/utils/cn";
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
-
+  const { logout } = useAuth();
   const navItems = [
     { path: "", label: "Dashboard", icon: "LayoutDashboard" },
     { path: "farms", label: "Farms", icon: "MapPin" },
@@ -58,24 +58,34 @@ const Header = () => {
               </Link>
             ))}
           </nav>
+{/* Logout Button - Desktop */}
+          <button
+            onClick={logout}
+            className="hidden md:flex items-center space-x-2 px-4 py-2 text-sm font-medium text-gray-700 hover:text-primary transition-colors"
+          >
+            <ApperIcon name="LogOut" size={18} />
+            <span>Logout</span>
+          </button>
 
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="lg:hidden p-2 rounded-button text-gray-700 hover:bg-gray-100"
+            className="md:hidden p-2 rounded-button text-gray-700 hover:bg-gray-100"
           >
             <ApperIcon name={isMobileMenuOpen ? "X" : "Menu"} size={24} />
           </button>
         </div>
+      </div>
 
-        {/* Mobile Navigation */}
-        {isMobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="lg:hidden py-4 border-t border-gray-200"
-          >
-            <nav className="space-y-1">
+      {/* Mobile Menu */}
+      {isMobileMenuOpen && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          className="md:hidden absolute top-16 left-0 right-0 bg-white border-b border-gray-200 shadow-lg z-50"
+        >
+          <nav className="space-y-1">
               {navItems.map((item) => (
                 <Link
                   key={item.path}
@@ -92,7 +102,15 @@ const Header = () => {
                   <ApperIcon name={item.icon} size={18} className="mr-3" />
                   {item.label}
                 </Link>
-              ))}
+))}
+              {/* Logout Button - Mobile */}
+              <button
+                onClick={logout}
+                className="flex items-center space-x-2 w-full px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                <ApperIcon name="LogOut" size={18} />
+                <span>Logout</span>
+              </button>
             </nav>
           </motion.div>
         )}

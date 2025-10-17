@@ -19,12 +19,12 @@ const Farms = () => {
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingFarm, setEditingFarm] = useState(null);
-  const [formData, setFormData] = useState({
-    name: "",
-    location: "",
-    totalArea: "",
-    unit: "acres",
-    notes: ""
+const [formData, setFormData] = useState({
+    name_c: "",
+    location_c: "",
+    total_area_c: "",
+    unit_c: "acres",
+    notes_c: ""
   });
 
   const loadData = async () => {
@@ -48,24 +48,24 @@ const Farms = () => {
     loadData();
   }, []);
 
-  const openModal = (farm = null) => {
+const openModal = (farm = null) => {
     if (farm) {
       setEditingFarm(farm);
       setFormData({
-        name: farm.name,
-        location: farm.location,
-        totalArea: farm.totalArea.toString(),
-        unit: farm.unit,
-        notes: farm.notes || ""
+        name_c: farm.name_c,
+        location_c: farm.location_c,
+        total_area_c: farm.total_area_c.toString(),
+        unit_c: farm.unit_c,
+        notes_c: farm.notes_c || ""
       });
     } else {
-      setEditingFarm(null);
+setEditingFarm(null);
       setFormData({
-        name: "",
-        location: "",
-        totalArea: "",
-        unit: "acres",
-        notes: ""
+        name_c: "",
+        location_c: "",
+        total_area_c: "",
+        unit_c: "acres",
+        notes_c: ""
       });
     }
     setIsModalOpen(true);
@@ -74,27 +74,27 @@ const Farms = () => {
   const closeModal = () => {
     setIsModalOpen(false);
     setEditingFarm(null);
-    setFormData({
-      name: "",
-      location: "",
-      totalArea: "",
-      unit: "acres",
-      notes: ""
+setFormData({
+      name_c: "",
+      location_c: "",
+      total_area_c: "",
+      unit_c: "acres",
+      notes_c: ""
     });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!formData.name.trim() || !formData.location.trim() || !formData.totalArea) {
+if (!formData.name_c.trim() || !formData.location_c.trim() || !formData.total_area_c) {
       toast.error("Please fill in all required fields");
       return;
     }
 
-    try {
+try {
       const farmData = {
         ...formData,
-        totalArea: parseFloat(formData.totalArea)
+        total_area_c: parseFloat(formData.total_area_c)
       };
 
       if (editingFarm) {
@@ -125,14 +125,14 @@ const Farms = () => {
     }
   };
 
-  const getFarmCropCount = (farmId) => {
-    return crops.filter(crop => crop.farmId === farmId.toString()).length;
+const getFarmCropCount = (farmId) => {
+    return crops.filter(crop => crop.farm_id_c?.Id === farmId).length;
   };
 
-  const getActiveCropCount = (farmId) => {
+const getActiveCropCount = (farmId) => {
     return crops.filter(crop => 
-      crop.farmId === farmId.toString() && 
-      (crop.status === 'growing' || crop.status === 'flowering')
+      crop.farm_id_c?.Id === farmId && 
+      (crop.status_c === 'growing' || crop.status_c === 'flowering')
     ).length;
   };
 
@@ -170,14 +170,14 @@ const Farms = () => {
       {/* Farms Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {farms.map((farm) => (
-          <Card key={farm.Id} className="p-6 hover" onClick={() => openModal(farm)}>
+<Card key={farm.Id} className="p-6 hover" onClick={() => openModal(farm)}>
             <div className="space-y-4">
               <div className="flex items-start justify-between">
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-gray-900">{farm.name}</h3>
+                  <h3 className="text-lg font-semibold text-gray-900">{farm.name_c}</h3>
                   <p className="text-sm text-gray-600 flex items-center mt-1">
                     <ApperIcon name="MapPin" size={14} className="mr-1" />
-                    {farm.location}
+                    {farm.location_c}
                   </p>
                 </div>
                 <div className="flex space-x-1">
@@ -207,9 +207,9 @@ const Farms = () => {
               </div>
 
               <div className="space-y-2">
-                <div className="flex justify-between items-center">
+<div className="flex justify-between items-center">
                   <span className="text-sm text-gray-600">Total Area</span>
-                  <span className="font-medium">{farm.totalArea} {farm.unit}</span>
+                  <span className="font-medium">{farm.total_area_c} {farm.unit_c}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-gray-600">Total Crops</span>
@@ -221,16 +221,16 @@ const Farms = () => {
                 </div>
               </div>
 
-              {farm.notes && (
+{farm.notes_c && (
                 <div className="pt-3 border-t border-gray-100">
-                  <p className="text-sm text-gray-600">{farm.notes}</p>
+                  <p className="text-sm text-gray-600">{farm.notes_c}</p>
                 </div>
               )}
 
               <div className="pt-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-gray-500">
-                    Created: {new Date(farm.createdAt).toLocaleDateString()}
+<span className="text-xs text-gray-500">
+                    Created: {new Date(farm.CreatedOn).toLocaleDateString()}
                   </span>
                   <ApperIcon name="ChevronRight" size={16} className="text-gray-400" />
                 </div>
@@ -248,38 +248,38 @@ const Farms = () => {
         size="default"
       >
         <form onSubmit={handleSubmit} className="space-y-4">
-          <Input
+<Input
             label="Farm Name"
-            value={formData.name}
-            onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+            value={formData.name_c}
+            onChange={(e) => setFormData(prev => ({ ...prev, name_c: e.target.value }))}
             placeholder="Enter farm name"
             required
           />
 
-          <Input
+<Input
             label="Location"
-            value={formData.location}
-            onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
+            value={formData.location_c}
+            onChange={(e) => setFormData(prev => ({ ...prev, location_c: e.target.value }))}
             placeholder="Enter farm location"
             required
           />
 
           <div className="grid grid-cols-2 gap-4">
-            <Input
+<Input
               label="Total Area"
               type="number"
-              value={formData.totalArea}
-              onChange={(e) => setFormData(prev => ({ ...prev, totalArea: e.target.value }))}
+              value={formData.total_area_c}
+              onChange={(e) => setFormData(prev => ({ ...prev, total_area_c: e.target.value }))}
               placeholder="0"
               min="0"
               step="0.1"
               required
             />
 
-            <Select
+<Select
               label="Unit"
-              value={formData.unit}
-              onChange={(e) => setFormData(prev => ({ ...prev, unit: e.target.value }))}
+              value={formData.unit_c}
+              onChange={(e) => setFormData(prev => ({ ...prev, unit_c: e.target.value }))}
             >
               <option value="acres">Acres</option>
               <option value="hectares">Hectares</option>
@@ -292,9 +292,9 @@ const Farms = () => {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Notes (Optional)
             </label>
-            <textarea
-              value={formData.notes}
-              onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
+<textarea
+              value={formData.notes_c}
+              onChange={(e) => setFormData(prev => ({ ...prev, notes_c: e.target.value }))}
               placeholder="Enter any additional notes about this farm"
               rows={3}
               className="w-full rounded-button border-2 border-gray-200 bg-white px-3 py-2.5 text-base transition-colors placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-0"

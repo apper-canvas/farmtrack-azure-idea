@@ -16,7 +16,7 @@ import { format, isToday, isBefore } from "date-fns";
 import { toast } from "react-toastify";
 
 const Tasks = () => {
-  const [tasks, setTasks] = useState([]);
+const [tasks, setTasks] = useState([]);
   const [farms, setFarms] = useState([]);
   const [crops, setCrops] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -25,12 +25,12 @@ const Tasks = () => {
   const [editingTask, setEditingTask] = useState(null);
   const [activeTab, setActiveTab] = useState("upcoming");
   const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    farmId: "",
-    cropId: "",
-    dueDate: "",
-    priority: "medium"
+    title_c: "",
+    description_c: "",
+    farm_id_c: "",
+    crop_id_c: "",
+    due_date_c: "",
+    priority_c: "medium"
   });
 
   const loadData = async () => {
@@ -57,15 +57,15 @@ const Tasks = () => {
   }, []);
 
   const openModal = (task = null) => {
-    if (task) {
+if (task) {
       setEditingTask(task);
       setFormData({
-        title: task.title,
-        description: task.description || "",
-        farmId: task.farmId || "",
-        cropId: task.cropId || "",
-        dueDate: task.dueDate,
-        priority: task.priority
+        title_c: task.title_c,
+        description_c: task.description_c || "",
+        farm_id_c: task.farm_id_c?.Id ? task.farm_id_c.Id.toString() : "",
+        crop_id_c: task.crop_id_c?.Id ? task.crop_id_c.Id.toString() : "",
+        due_date_c: task.due_date_c,
+        priority_c: task.priority_c
       });
     } else {
       setEditingTask(null);
@@ -96,9 +96,9 @@ const Tasks = () => {
 
     try {
       const taskData = {
-        ...formData,
-        farmId: formData.farmId || null,
-        cropId: formData.cropId || null
+...formData,
+        farm_id_c: formData.farm_id_c || null,
+        crop_id_c: formData.crop_id_c || null
       };
 
       if (editingTask) {
@@ -143,21 +143,21 @@ const Tasks = () => {
     const now = new Date();
     
     return {
-      upcoming: tasks.filter(task => 
-        !task.completed && !isToday(new Date(task.dueDate)) && !isBefore(new Date(task.dueDate), now)
+upcoming: tasks.filter(task => 
+        !task.completed_c && !isToday(new Date(task.due_date_c)) && !isBefore(new Date(task.due_date_c), now)
       ),
       today: tasks.filter(task => 
-        !task.completed && isToday(new Date(task.dueDate))
+        !task.completed_c && isToday(new Date(task.due_date_c))
       ),
       overdue: tasks.filter(task => 
-        !task.completed && isBefore(new Date(task.dueDate), now) && !isToday(new Date(task.dueDate))
+        !task.completed_c && isBefore(new Date(task.due_date_c), now) && !isToday(new Date(task.due_date_c))
       ),
-      completed: tasks.filter(task => task.completed)
+      completed: tasks.filter(task => task.completed_c)
     };
   };
 
   const taskGroups = getTasksByStatus();
-  const farmCrops = crops.filter(crop => crop.farmId === formData.farmId);
+const farmCrops = crops.filter(crop => crop.farm_id_c?.Id?.toString() === formData.farm_id_c);
 
   const tabs = [
     { id: "upcoming", label: "Upcoming", count: taskGroups.upcoming.length, icon: "Calendar" },
@@ -290,8 +290,8 @@ const Tasks = () => {
               }}
             >
               <option value="">Select a farm</option>
-              {farms.map(farm => (
-                <option key={farm.Id} value={farm.Id.toString()}>{farm.name}</option>
+{farms.map(farm => (
+                <option key={farm.Id} value={farm.Id.toString()}>{farm.name_c}</option>
               ))}
             </Select>
 
@@ -302,9 +302,9 @@ const Tasks = () => {
               disabled={!formData.farmId}
             >
               <option value="">Select a crop</option>
-              {farmCrops.map(crop => (
+{farmCrops.map(crop => (
                 <option key={crop.Id} value={crop.Id.toString()}>
-                  {crop.cropName} - {crop.variety}
+                  {crop.crop_name_c} - {crop.variety_c}
                 </option>
               ))}
             </Select>

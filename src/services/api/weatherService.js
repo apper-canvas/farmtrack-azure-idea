@@ -1,9 +1,56 @@
-import weatherData from "@/services/mockData/weather.json";
+// Weather service - Mock implementation (no database table available)
+const mockWeatherData = [
+  {
+    "date": "2024-12-18",
+    "condition": "sunny",
+    "high": 72,
+    "low": 45,
+    "precipitation": 0,
+    "humidity": 35,
+    "windSpeed": 8
+  },
+  {
+    "date": "2024-12-19",
+    "condition": "cloudy",
+    "high": 68,
+    "low": 42,
+    "precipitation": 15,
+    "humidity": 60,
+    "windSpeed": 12
+  },
+  {
+    "date": "2024-12-20",
+    "condition": "rainy",
+    "high": 62,
+    "low": 48,
+    "precipitation": 80,
+    "humidity": 85,
+    "windSpeed": 15
+  },
+  {
+    "date": "2024-12-21",
+    "condition": "cloudy",
+    "high": 65,
+    "low": 44,
+    "precipitation": 25,
+    "humidity": 70,
+    "windSpeed": 10
+  },
+  {
+    "date": "2024-12-22",
+    "condition": "sunny",
+    "high": 70,
+    "low": 41,
+    "precipitation": 5,
+    "humidity": 40,
+    "windSpeed": 6
+  }
+];
 
 const weatherService = {
   getCurrentWeather: async () => {
     await new Promise(resolve => setTimeout(resolve, 500));
-    const today = weatherData[0];
+    const today = mockWeatherData[0];
     return {
       ...today,
       current: true
@@ -12,8 +59,7 @@ const weatherService = {
 
   getForecast: async (days = 5) => {
     await new Promise(resolve => setTimeout(resolve, 400));
-    return weatherData.slice(0, days).map(day => ({ ...day }));
+    return mockWeatherData.slice(0, days).map(day => ({ ...day }));
   }
 };
-
 export default weatherService;

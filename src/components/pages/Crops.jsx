@@ -15,7 +15,7 @@ import { format, differenceInDays } from "date-fns";
 import { toast } from "react-toastify";
 
 const Crops = () => {
-  const [crops, setCrops] = useState([]);
+const [crops, setCrops] = useState([]);
   const [farms, setFarms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -24,14 +24,14 @@ const Crops = () => {
   const [filterFarm, setFilterFarm] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
   const [formData, setFormData] = useState({
-    farmId: "",
-    cropName: "",
-    variety: "",
-    plantingDate: "",
-    expectedHarvestDate: "",
-    areaPlanted: "",
-    status: "growing",
-    notes: ""
+    farm_id_c: "",
+    crop_name_c: "",
+    variety_c: "",
+    planting_date_c: "",
+    expected_harvest_date_c: "",
+    area_planted_c: "",
+    status_c: "growing",
+    notes_c: ""
   });
 
   const loadData = async () => {
@@ -56,17 +56,17 @@ const Crops = () => {
   }, []);
 
   const openModal = (crop = null) => {
-    if (crop) {
+if (crop) {
       setEditingCrop(crop);
       setFormData({
-        farmId: crop.farmId,
-        cropName: crop.cropName,
-        variety: crop.variety,
-        plantingDate: crop.plantingDate,
-        expectedHarvestDate: crop.expectedHarvestDate,
-        areaPlanted: crop.areaPlanted.toString(),
-        status: crop.status,
-        notes: crop.notes || ""
+        farm_id_c: crop.farm_id_c?.Id ? crop.farm_id_c.Id.toString() : "",
+        crop_name_c: crop.crop_name_c,
+        variety_c: crop.variety_c,
+        planting_date_c: crop.planting_date_c,
+        expected_harvest_date_c: crop.expected_harvest_date_c,
+        area_planted_c: crop.area_planted_c.toString(),
+        status_c: crop.status_c,
+        notes_c: crop.notes_c || ""
       });
     } else {
       setEditingCrop(null);
@@ -149,12 +149,12 @@ const Crops = () => {
   };
 
   const getFarmName = (farmId) => {
-    const farm = farms.find(f => f.Id.toString() === farmId);
-    return farm ? farm.name : "Unknown Farm";
+const farm = farms.find(f => f.Id.toString() === farmId);
+    return farm ? farm.name_c : "Unknown Farm";
   };
 
-  const filteredCrops = crops.filter(crop => {
-    const matchesFarm = !filterFarm || crop.farmId === filterFarm;
+const filteredCrops = crops.filter(crop => {
+    const matchesFarm = !filterFarm || crop.farm_id_c?.Id?.toString() === filterFarm;
     const matchesStatus = !filterStatus || crop.status === filterStatus;
     return matchesFarm && matchesStatus;
   });
@@ -186,8 +186,8 @@ const Crops = () => {
           className="w-full sm:w-auto"
         >
           <option value="">All Farms</option>
-          {farms.map(farm => (
-            <option key={farm.Id} value={farm.Id.toString()}>{farm.name}</option>
+{farms.map(farm => (
+            <option key={farm.Id} value={farm.Id.toString()}>{farm.name_c}</option>
           ))}
         </Select>
 
@@ -231,41 +231,41 @@ const Crops = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredCrops.map((crop) => (
-            <Card key={crop.Id} className="p-6">
+<Card key={crop.Id} className="p-6">
               <div className="space-y-4">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-gray-900">{crop.cropName}</h3>
-                    <p className="text-sm text-gray-600">{crop.variety}</p>
+                    <h3 className="text-lg font-semibold text-gray-900">{crop.crop_name_c}</h3>
+                    <p className="text-sm text-gray-600">{crop.variety_c}</p>
                   </div>
-                  <Badge {...getStatusBadge(crop.status)}>
-                    {getStatusBadge(crop.status).label}
+                  <Badge {...getStatusBadge(crop.status_c)}>
+                    {getStatusBadge(crop.status_c).label}
                   </Badge>
                 </div>
 
                 <div className="space-y-2">
                   <div className="flex items-center text-sm text-gray-600">
                     <ApperIcon name="MapPin" size={14} className="mr-2" />
-                    {getFarmName(crop.farmId)}
+                    {getFarmName(crop.farm_id_c?.Id?.toString())}
                   </div>
                   
                   <div className="flex items-center text-sm text-gray-600">
                     <ApperIcon name="Calendar" size={14} className="mr-2" />
-                    Planted: {format(new Date(crop.plantingDate), 'MMM d, yyyy')}
+                    Planted: {format(new Date(crop.planting_date_c), 'MMM d, yyyy')}
                   </div>
                   
                   <div className="flex items-center text-sm text-gray-600">
                     <ApperIcon name="Harvest" size={14} className="mr-2" />
-                    Area: {crop.areaPlanted} acres
+                    Area: {crop.area_planted_c} acres
                   </div>
                 </div>
 
-                {crop.expectedHarvestDate && crop.status !== 'harvested' && (
+                {crop.expected_harvest_date_c && crop.status_c !== 'harvested' && (
                   <div className="bg-gray-50 rounded-button p-3">
                     <div className="flex justify-between items-center">
                       <span className="text-sm text-gray-600">Harvest in:</span>
                       <span className="font-medium text-gray-900">
-                        {getDaysToHarvest(crop.expectedHarvestDate)}
+                        {getDaysToHarvest(crop.expected_harvest_date_c)}
                       </span>
                     </div>
                   </div>
@@ -317,8 +317,8 @@ const Crops = () => {
             required
           >
             <option value="">Select a farm</option>
-            {farms.map(farm => (
-              <option key={farm.Id} value={farm.Id.toString()}>{farm.name}</option>
+{farms.map(farm => (
+              <option key={farm.Id} value={farm.Id.toString()}>{farm.name_c}</option>
             ))}
           </Select>
 
