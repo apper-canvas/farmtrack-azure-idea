@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
-import { useAuth } from "@/layouts/Root";
 import ApperIcon from "@/components/ApperIcon";
+import { useAuth } from "@/layouts/Root";
+import { cn } from "@/lib/utils";
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -111,10 +112,9 @@ const Header = () => {
                 <ApperIcon name="LogOut" size={18} />
                 <span>Logout</span>
               </button>
-            </nav>
+</nav>
           </motion.div>
         )}
-      </div>
     </header>
   );
 };
